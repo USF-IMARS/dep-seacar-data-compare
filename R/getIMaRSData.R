@@ -9,7 +9,7 @@ value_map <- c(
   "DEP_ECA_WQ - 5033" = "DEP",
   # ??? = "DERM",
   # ??? = "FIU",
-  "MIAMI_BEACHY_WQ_4058" = "Miami Beach"
+  "MIAMI_BEACH_WQ_4058" = "Miami Beach"
   # ??? = "Miami Beach  Outfalls",
   # ??? = "Miami Beach Re-Sample",
   # ??? = "Palm Beach",
