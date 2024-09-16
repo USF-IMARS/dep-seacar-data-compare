@@ -1,6 +1,6 @@
 project:
   type: website
-  pre-render: preRender.R
+  pre-render: R/preRender.R
 
 website:
   title: "dep-seacar-data-compare"
