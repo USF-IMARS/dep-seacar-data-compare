@@ -25,35 +25,24 @@ librarian::shelf(
   tidyverse,
   utils
 )
+
+source(here("R/getIMaRSData.R"))
+
+DATA_ROOT <- here("./data/02-SEACAR_unzipped")
+SEACAR_ID <- sub(".*_WQ_", "", params$provider_id)  # Extract the part after _WQ_
 ```
-
-
 
 ```{R}
 # Load SEACAR file
 seacar_data <- read_delim(
-  here("./data/02-SEACAR_unzipped/AOML/Discrete\ WQ\ -\ 3.txt"),
+  glue(
+    "{DATA_ROOT}/{params$provider_id}/Discrete\ WQ\ -\ {SEACAR_ID}.txt"
+  ),
   delim="|"
 )
 
-# Load IMaRS-processed data & align to SEACAR columns
-imars_data <- read_csv(
-  "./data/df_cleaned.csv"
-) %>%
-  filter(Source == "AOML") %>%
-  mutate(
-    ParameterName = Parameter,
-    OriginalLatitude = Latitude,
-    OriginalLongitude = Longitude,
-    ProgramLocationID = Site,
-    ResultValue = verbatimValue,
-    SampleDate = glue(
-      "{Year}-{sprintf('%02d', Month)}-{sprintf('%02d', Day)}"
-    )  
-  )
+imars_data <- getIMaRSData(params$provider_id)
 ```
-
-## Inspect an Example Provider (AOML)
 
 ### `ParameterName` values malignment
 `ParameterName` columns have different values for same data.
@@ -67,25 +56,6 @@ print("=== SEACAR ==========================")
 print(unique(seacar_data$ParameterName))
 
 ```
-
-A mapping of names manually creating using AOML data is below:
-
-IMaRS Name          | SEACAR name 
---------------------|-------------------------
-Ammonium (N)        | Ammonium, Filtered (NH4)
-Chlorophyll a	      | Chlorophyll a, Uncorrected for Pheophytin
--                   | Colored Dissolved Organic Matter
--                   | Light Extinction Coefficient
-Nitrate (N)         | - 
-Nitrate-Nitrite (N) | NO2+3, Filtered
-Nitrite (N)         | - 
-Orthophosphate (P)  |
--                   | pH
--                   | Phosphate, Filtered (PO4)
--                   | Salinity
-Silica              | 
--                   | Total Suspended Solids
--                   | Water Temperature
 
 
 ```{R}

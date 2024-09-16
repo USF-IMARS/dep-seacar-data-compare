@@ -6,3 +6,24 @@ listing:
   contents: provider_reports
   type: grid
 ---
+
+# param name misalignment (based on AOML data)
+
+A mapping of names manually creating using AOML data is below:
+
+IMaRS Name          | SEACAR name 
+--------------------|-------------------------
+Ammonium (N)        | Ammonium, Filtered (NH4)
+Chlorophyll a	      | Chlorophyll a, Uncorrected for Pheophytin
+-                   | Colored Dissolved Organic Matter
+-                   | Light Extinction Coefficient
+Nitrate (N)         | - 
+Nitrate-Nitrite (N) | NO2+3, Filtered
+Nitrite (N)         | - 
+Orthophosphate (P)  |
+-                   | pH
+-                   | Phosphate, Filtered (PO4)
+-                   | Salinity
+Silica              | 
+-                   | Total Suspended Solids
+-                   | Water Temperature
