@@ -1,5 +1,6 @@
 project:
   type: website
+  pre-render: preRender.R
 
 website:
   title: "dep-seacar-data-compare"
@@ -7,7 +8,6 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
 
 format:
   html:

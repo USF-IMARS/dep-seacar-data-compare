@@ -1,0 +1,166 @@
+---
+title: "Dep-wq-data-report"
+description: DEP Water Quality Data Report
+code-fold: true
+params: 
+  provider_id: AOML_WQ_3
+---
+
+## Data Loading & Alignment
+  
+```{r}
+#| label: import libraries & functions
+#| code-summary: (code) import libraries & functions
+#| message: false
+#| warning: false
+
+if (!requireNamespace("librarian", quietly = TRUE)) {
+  install.packages("librarian")
+}
+librarian::shelf(
+  ggplot2,
+  glue,
+  here,
+  readxl,
+  tidyverse,
+  utils
+)
+```
+
+
+
+```{R}
+# Load SEACAR file
+seacar_data <- read_delim(
+  here("./data/02-SEACAR_unzipped/AOML/Discrete\ WQ\ -\ 3.txt"),
+  delim="|"
+)
+
+# Load IMaRS-processed data & align to SEACAR columns
+imars_data <- read_csv(
+  "./data/df_cleaned.csv"
+) %>%
+  filter(Source == "AOML") %>%
+  mutate(
+    ParameterName = Parameter,
+    OriginalLatitude = Latitude,
+    OriginalLongitude = Longitude,
+    ProgramLocationID = Site,
+    ResultValue = verbatimValue,
+    SampleDate = glue(
+      "{Year}-{sprintf('%02d', Month)}-{sprintf('%02d', Day)}"
+    )  
+  )
+```
+
+## Inspect an Example Provider (AOML)
+
+### `ParameterName` values malignment
+`ParameterName` columns have different values for same data.
+Some columns appear to not exist in both.
+
+```{R}
+#| code-summary: print unique values for param name
+print("=== IMaRS ==========================")
+print(unique(imars_data$ParameterName))
+print("=== SEACAR ==========================")
+print(unique(seacar_data$ParameterName))
+
+```
+
+A mapping of names manually creating using AOML data is below:
+
+IMaRS Name          | SEACAR name 
+--------------------|-------------------------
+Ammonium (N)        | Ammonium, Filtered (NH4)
+Chlorophyll a	      | Chlorophyll a, Uncorrected for Pheophytin
+-                   | Colored Dissolved Organic Matter
+-                   | Light Extinction Coefficient
+Nitrate (N)         | - 
+Nitrate-Nitrite (N) | NO2+3, Filtered
+Nitrite (N)         | - 
+Orthophosphate (P)  |
+-                   | pH
+-                   | Phosphate, Filtered (PO4)
+-                   | Salinity
+Silica              | 
+-                   | Total Suspended Solids
+-                   | Water Temperature
+
+
+```{R}
+# Count the number of points for each reporting provider in SEACAR and DEP data
+seacar_count <- seacar_data %>%
+  group_by(ParameterName) %>%
+  summarise(count = n())
+
+imars_count <- imars_data %>%
+  group_by(ParameterName) %>%
+  summarise(count = n())
+
+# Combine and display the results
+comparison_count <- full_join(seacar_count, imars_count, by = "ParameterName", suffix = c("_SEACAR", "_IMaRS"))
+comparison_count
+```
+
+
+### Ammonia distribution across all sites
+
+```{R}
+# Select relevant nutrient columns from SEACAR and DEP datasets
+# Plot distributions side by side for SEACAR and IMaRS (DEP)
+
+# Combine the datasets with a new column to identify the source
+combined_data <- bind_rows(
+  seacar_data %>% 
+    select(ParameterName, ResultValue) %>%
+    filter(ParameterName == "Ammonium, Filtered (NH4)") %>% 
+    mutate(Source = "SEACAR"),
+  imars_data %>% 
+    select(ParameterName, ResultValue) %>%
+    filter(ParameterName == "Ammonium (N)") %>% 
+    mutate(Source = "IMaRS")
+)
+
+# Plot side-by-side distributions with log-scaled x-axis
+ggplot(combined_data, aes(x = ResultValue, fill = Source)) +
+  geom_density(alpha = 0.5) +
+  labs(title = "Ammonium Distributions: SEACAR vs IMaRS (Log Scale)",
+       x = "Nutrient Value (Log Scale)",
+       y = "Density",
+       fill = "Source") +
+  scale_x_log10() +   # Log scale on the x-axis
+  theme_minimal()
+
+
+```
+
+
+### Site ID malignment
+Site IDs in each are radically different:
+
+```{R}
+imars_sites <- sort(unique(imars_data$ProgramLocationID))
+seacar_sites <- sort(unique(seacar_data$ProgramLocationID))
+
+print("=== IMaRS ==========================")
+print(imars_sites[1:5])
+print("=== SEACAR ==========================")
+print(seacar_sites[1:5])
+
+```
+
+SEACAR data has many more site names
+
+```{R}
+print("=== IMaRS ==========================")
+print(length(imars_sites))
+print("=== SEACAR ==========================")
+print(length(seacar_sites))
+
+```
+
+
+### TODO: compare specific stations
+Cannot compare within stations until station number mapping is completed (see above section about station id malignment).
+
