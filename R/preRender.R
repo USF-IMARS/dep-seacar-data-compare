@@ -1,3 +1,8 @@
+# # Proceed if rendering the whole project, exit otherwise
+if (!nzchar(Sys.getenv("QUARTO_PROJECT_RENDER_ALL"))) {
+  quit()
+}
+
 # ===========================================================================
 # unzip SEACAR files
 # ===========================================================================
@@ -64,7 +69,7 @@ DATA_DIR = "data/02-SEACAR_unzipped"
 
 # create the template
 templ <- gsub(
-    "\"AOML_WQ_3\"", "{{provider_id}}", 
+    "AOML_WQ_3", "{{provider_id}}", 
   readLines(REPORT_TEMPLATE))
 
 dir.create(REPORTS_DIR, showWarnings=FALSE)

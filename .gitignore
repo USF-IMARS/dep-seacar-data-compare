@@ -4,6 +4,7 @@
 .Ruserdata
 *.Rproj
 
+_site/
 data/
 provider_reports/provider_reports
 /.quarto/

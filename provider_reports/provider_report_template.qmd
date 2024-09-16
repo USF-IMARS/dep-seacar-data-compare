@@ -1,13 +1,11 @@
 ---
-title: "Dep-wq-data-report"
+title: "AOML_WQ_3 Report"
 description: DEP Water Quality Data Report
 code-fold: true
 params: 
   provider_id: AOML_WQ_3
 ---
 
-## Data Loading & Alignment
-  
 ```{r}
 #| label: import libraries & functions
 #| code-summary: (code) import libraries & functions
@@ -34,10 +32,14 @@ SEACAR_ID <- sub(".*_WQ_", "", params$provider_id)  # Extract the part after _WQ
 
 ```{R}
 # Load SEACAR file
+# find the .txt file (could be `Continuous WQ - N.xt` or `Discrete - N.txt`)
+txt_file <- list.files(
+  path = glue("{DATA_ROOT}/{params$provider_id}/"), 
+  pattern = "\\.txt$", 
+  full.names = TRUE
+)
 seacar_data <- read_delim(
-  glue(
-    "{DATA_ROOT}/{params$provider_id}/Discrete\ WQ\ -\ {SEACAR_ID}.txt"
-  ),
+  txt_file,
   delim="|"
 )
 
@@ -50,11 +52,12 @@ Some columns appear to not exist in both.
 
 ```{R}
 #| code-summary: print unique values for param name
-print("=== IMaRS ==========================")
-print(unique(imars_data$ParameterName))
-print("=== SEACAR ==========================")
-print(unique(seacar_data$ParameterName))
-
+cat(
+  "=== IMaRS ==========================\n",
+  unique(imars_data$ParameterName), "\n",
+  "=== SEACAR ==========================\n",
+  unique(seacar_data$ParameterName)
+)
 ```
 
 
@@ -113,10 +116,11 @@ Site IDs in each are radically different:
 imars_sites <- sort(unique(imars_data$ProgramLocationID))
 seacar_sites <- sort(unique(seacar_data$ProgramLocationID))
 
-print("=== IMaRS ==========================")
-print(imars_sites[1:5])
-print("=== SEACAR ==========================")
-print(seacar_sites[1:5])
+cat("=== IMaRS ==========================\n",
+  imars_sites[1:5], "\n",
+  "=== SEACAR ==========================\n",
+  seacar_sites[1:5], "\n"
+)
 
 ```
 
