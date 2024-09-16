@@ -8,6 +8,7 @@ website:
     left:
       - href: index.qmd
         text: Home
+      - href: provider_reports/provider_reports.qmd
 
 format:
   html:
