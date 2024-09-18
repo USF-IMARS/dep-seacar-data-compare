@@ -6,6 +6,10 @@ params:
   provider_id: AOML_WQ_3  # must be "AOML_WQ_3"
 ---
 
+TODO: 
+* update naming IMaRS -> FCRUWQD (Florida Coral Reef Unified Water Quality Database)
+* side-by-side maps of FCRUWQD stations vs SEACAR stations
+
 ```{r}
 #| label: import libraries & functions
 #| code-summary: (code) import libraries & functions
@@ -73,10 +77,42 @@ imars_count <- imars_data %>%
 
 # Combine and display the results
 comparison_count <- full_join(seacar_count, imars_count, by = "ParameterName", suffix = c("_SEACAR", "_IMaRS"))
+
+# TODO: print all rows here
 comparison_count
 ```
 
+### Site ID malignment
+Site IDs in each are radically different:
 
+```{R}
+imars_sites <- sort(unique(imars_data$ProgramLocationID))
+seacar_sites <- sort(unique(seacar_data$ProgramLocationID))
+
+cat("=== IMaRS ==========================\n",
+  imars_sites[1:25], "\n",
+  "=== SEACAR ==========================\n",
+  seacar_sites[1:25], "\n"
+)
+
+```
+
+SEACAR data has many more site names
+
+```{R}
+print("=== IMaRS ==========================")
+print(length(imars_sites))
+print("=== SEACAR ==========================")
+print(length(seacar_sites))
+
+```
+
+
+### TODO: compare specific stations
+Cannot compare within stations until station number mapping is completed (see above section about station id malignment).
+
+
+## compare distributions of nutrient data
 ### Ammonia distribution across all sites
 
 ```{R}
@@ -107,34 +143,4 @@ ggplot(combined_data, aes(x = ResultValue, fill = Source)) +
 
 
 ```
-
-
-### Site ID malignment
-Site IDs in each are radically different:
-
-```{R}
-imars_sites <- sort(unique(imars_data$ProgramLocationID))
-seacar_sites <- sort(unique(seacar_data$ProgramLocationID))
-
-cat("=== IMaRS ==========================\n",
-  imars_sites[1:5], "\n",
-  "=== SEACAR ==========================\n",
-  seacar_sites[1:5], "\n"
-)
-
-```
-
-SEACAR data has many more site names
-
-```{R}
-print("=== IMaRS ==========================")
-print(length(imars_sites))
-print("=== SEACAR ==========================")
-print(length(seacar_sites))
-
-```
-
-
-### TODO: compare specific stations
-Cannot compare within stations until station number mapping is completed (see above section about station id malignment).
 
