@@ -4,17 +4,16 @@ value_map <- c(
   # ??? = 21FLWQA
   "AOML_WQ_3" = "AOML", 
   "BBAP_WQ_5026" = "BBAP", 
-  "BBWW_WQ_5077" = "BBWW",
+  "BBWW_WQ_4057" = "BBWW",  # TODO: load new zip fild from box
   # ??? = "BROWARD", 
   "DEP_ECA_WQ - 5033" = "DEP",
   # ??? = "DERM",
-  # ??? = "FIU",
-  "MIAMI_BEACH_WQ_4058" = "Miami Beach"
+  "MIAMI_BEACH_WQ_4058" = "Miami Beach",  # TODO: map this to merged "Miami Beach*"
   # ??? = "Miami Beach  Outfalls",
   # ??? = "Miami Beach Re-Sample",
   # ??? = "Palm Beach",
-  # "SERC_FKNMS_WQ_297" = ???,
-  # "SERRC_WQ_509" = ???
+  "SERC_FKNMS_WQ_297" = "FIU",
+  "SERC_WQ_509" = "FIU"
 )
 
 if (!requireNamespace("librarian", quietly = TRUE)) {
