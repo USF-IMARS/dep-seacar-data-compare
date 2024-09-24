@@ -6,10 +6,6 @@ params:
   provider_id: AOML_WQ_3  # must be "AOML_WQ_3"
 ---
 
-TODO: 
-* update naming IMaRS -> FCRUWQD (Florida Coral Reef Unified Water Quality Database)
-* side-by-side maps of FCRUWQD stations vs SEACAR stations
-
 ```{r}
 #| label: import libraries & functions
 #| code-summary: (code) import libraries & functions
@@ -20,10 +16,13 @@ if (!requireNamespace("librarian", quietly = TRUE)) {
   install.packages("librarian")
 }
 librarian::shelf(
+  dplyr,
   ggplot2,
   glue,
   here,
+  leaflet,
   readxl,
+  sf,
   tidyverse,
   utils
 )
@@ -50,6 +49,46 @@ seacar_data <- read_delim(
 imars_data <- getIMaRSData(params$provider_id)
 ```
 
+### Station Locations
+```{r}
+# Convert dataframes to sf objects, specifying the coordinate columns
+# and keeping only one row for each ProgramLocationID
+FCRUWQD_sf <- st_as_sf(
+  distinct(imars_data, ProgramLocationID, .keep_all = TRUE), 
+  coords = c("OriginalLongitude", "OriginalLatitude"), 
+  crs = 4326
+)
+SEACAR_sf <- st_as_sf(
+  distinct(seacar_data, ProgramLocationID, .keep_all = TRUE), 
+  coords = c("OriginalLongitude", "OriginalLatitude"), 
+  crs = 4326
+)
+
+# Create a leaflet map
+leaflet() %>%
+  # Add FCRUWQD points with popups showing station names
+  addTiles() %>%
+  addCircleMarkers(
+    data = FCRUWQD_sf,
+    color = "blue", 
+    radius = 5,
+    popup = ~paste("Station:", FCRUWQD_unique$ProgramLocationID)  # Display station name on click
+  ) %>%
+  # Add SEACAR points with popups showing station names
+  addCircleMarkers(
+    data = SEACAR_sf,
+    color = "red",
+    radius = 5,
+    popup = ~paste("Station:", SEACAR_unique$ProgramLocationID)  # Display station name on click
+  ) %>%
+  addLegend(
+    position = "topright",
+    colors = c("blue", "red"),
+    labels = c("FCRUWQD Stations", "SEACAR Stations"),
+    title = "Data Sources"
+  )
+```
+
 ### `ParameterName` values malignment
 `ParameterName` columns have different values for same data.
 Some columns appear to not exist in both.
@@ -57,7 +96,7 @@ Some columns appear to not exist in both.
 ```{R}
 #| code-summary: print unique values for param name
 cat(
-  "=== IMaRS ==========================\n",
+  "=== FCRUWQD ==========================\n",
   unique(imars_data$ParameterName), "\n",
   "=== SEACAR ==========================\n",
   unique(seacar_data$ParameterName)
@@ -76,7 +115,7 @@ imars_count <- imars_data %>%
   summarise(count = n())
 
 # Combine and display the results
-comparison_count <- full_join(seacar_count, imars_count, by = "ParameterName", suffix = c("_SEACAR", "_IMaRS"))
+comparison_count <- full_join(seacar_count, imars_count, by = "ParameterName", suffix = c("_SEACAR", "_FCRUWQD"))
 
 # TODO: print all rows here
 comparison_count
@@ -89,7 +128,7 @@ Site IDs in each are radically different:
 imars_sites <- sort(unique(imars_data$ProgramLocationID))
 seacar_sites <- sort(unique(seacar_data$ProgramLocationID))
 
-cat("=== IMaRS ==========================\n",
+cat("=== FCRUWQD ==========================\n",
   imars_sites[1:25], "\n",
   "=== SEACAR ==========================\n",
   seacar_sites[1:25], "\n"
@@ -100,11 +139,25 @@ cat("=== IMaRS ==========================\n",
 SEACAR data has many more site names
 
 ```{R}
-print("=== IMaRS ==========================")
+print("=== FCRUWQD ==========================")
 print(length(imars_sites))
 print("=== SEACAR ==========================")
 print(length(seacar_sites))
 
+```
+
+#### Alternative Site ID vs AreaID
+SEACAR also has `AreaID`s, but these also do not align with Site IDs.
+There are only 7 `AreaID`s.
+```{r}
+imars_sites <- sort(unique(imars_data$ProgramLocationID))
+seacar_sites <- sort(unique(seacar_data$AreaID))
+
+cat("=== FCRUWQD ==========================\n",
+  imars_sites[1:25], "\n",
+  "=== SEACAR ==========================\n",
+  seacar_sites[1:25], "\n"
+)
 ```
 
 
@@ -117,7 +170,7 @@ Cannot compare within stations until station number mapping is completed (see ab
 
 ```{R}
 # Select relevant nutrient columns from SEACAR and DEP datasets
-# Plot distributions side by side for SEACAR and IMaRS (DEP)
+# Plot distributions side by side for SEACAR and FCRUWQD
 
 # Combine the datasets with a new column to identify the source
 combined_data <- bind_rows(
@@ -128,13 +181,13 @@ combined_data <- bind_rows(
   imars_data %>% 
     select(ParameterName, ResultValue) %>%
     filter(ParameterName == "Ammonium (N)") %>% 
-    mutate(Source = "IMaRS")
+    mutate(Source = "FCRUWQD")
 )
 
 # Plot side-by-side distributions with log-scaled x-axis
 ggplot(combined_data, aes(x = ResultValue, fill = Source)) +
   geom_density(alpha = 0.5) +
-  labs(title = "Ammonium Distributions: SEACAR vs IMaRS (Log Scale)",
+  labs(title = "Ammonium Distributions: SEACAR vs FCRUWQD (Log Scale)",
        x = "Nutrient Value (Log Scale)",
        y = "Density",
        fill = "Source") +

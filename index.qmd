@@ -5,6 +5,6 @@ code-fold: true
 ---
 
 # dep-seacar-imars-qc-compare
-Comparison of IMaRS QC and SEACAR QC outputs for DEP project
+Comparison of FCRUWQD (Florida Coral Reef Unified Water Quality Database) QC and SEACAR QC outputs. Supported by FL DEP.
 
 
