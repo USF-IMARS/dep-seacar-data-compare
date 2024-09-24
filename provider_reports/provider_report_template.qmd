@@ -21,6 +21,7 @@ librarian::shelf(
   glue,
   here,
   leaflet,
+  mapview,
   readxl,
   sf,
   tidyverse,
@@ -50,16 +51,20 @@ imars_data <- getIMaRSData(params$provider_id)
 ```
 
 ### Station Locations
+Click to see station names:
 ```{r}
+#| code-summary: interactive map
+FCRUWQD_unique <- distinct(imars_data, ProgramLocationID, .keep_all = TRUE)
+SEACAR_unique <- distinct(seacar_data, ProgramLocationID, .keep_all = TRUE)
 # Convert dataframes to sf objects, specifying the coordinate columns
 # and keeping only one row for each ProgramLocationID
 FCRUWQD_sf <- st_as_sf(
-  distinct(imars_data, ProgramLocationID, .keep_all = TRUE), 
+  FCRUWQD_unique, 
   coords = c("OriginalLongitude", "OriginalLatitude"), 
   crs = 4326
 )
 SEACAR_sf <- st_as_sf(
-  distinct(seacar_data, ProgramLocationID, .keep_all = TRUE), 
+  SEACAR_unique, 
   coords = c("OriginalLongitude", "OriginalLatitude"), 
   crs = 4326
 )
@@ -87,6 +92,21 @@ leaflet() %>%
     labels = c("FCRUWQD Stations", "SEACAR Stations"),
     title = "Data Sources"
   )
+```
+```{R}
+#| code-summary: non-interactive map for thumbnail preview
+# Create the base map with ggplot
+ggplot() +
+  # Add FCRUWQD points
+  geom_sf(data = FCRUWQD_sf, aes(color = "FCRUWQD"), size = 3) +
+  # Add SEACAR points
+  geom_sf(data = SEACAR_sf, aes(color = "SEACAR"), size = 3) +
+  # Customize color mapping
+  scale_color_manual(values = c("FCRUWQD" = "blue", "SEACAR" = "red")) +
+  # Add labels and legend
+  labs(title = "Map with Points from FCRUWQD and SEACAR",
+       color = "Data Source") +
+  theme_minimal()
 ```
 
 ### `ParameterName` values malignment
