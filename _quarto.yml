@@ -9,7 +9,8 @@ website:
       - href: index.qmd
         text: Home
       - href: provider_reports/provider_reports.qmd
-
+      - href: https://github.com/USF-IMARS/dep-seacar-data-compare
+        text: Source Code on GitHub
 format:
   html:
     theme: cosmo
