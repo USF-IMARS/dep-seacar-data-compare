@@ -101,6 +101,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<link href="../../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="../../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="../../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="../../site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet">
+<script src="../../site_libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="../../site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet">
+<script src="../../site_libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="../../site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="../../site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
+<script src="../../site_libs/leaflet-binding-2.2.2/leaflet.js"></script>
 
 
 <link rel="stylesheet" href="../../styles.css">
@@ -131,6 +141,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="../../provider_reports/provider_reports.html"> 
 <span class="menu-text">Provider Reports</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/USF-IMARS/dep-seacar-data-compare"> 
+<span class="menu-text">Source Code on GitHub</span></a>
+  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -147,10 +161,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#parametername-values-malignment" id="toc-parametername-values-malignment" class="nav-link active" data-scroll-target="#parametername-values-malignment"><code>ParameterName</code> values malignment</a></li>
-  <li><a href="#ammonia-distribution-across-all-sites" id="toc-ammonia-distribution-across-all-sites" class="nav-link" data-scroll-target="#ammonia-distribution-across-all-sites">Ammonia distribution across all sites</a></li>
+  <li><a href="#station-locations" id="toc-station-locations" class="nav-link active" data-scroll-target="#station-locations">Station Locations</a></li>
+  <li><a href="#parametername-values-malignment" id="toc-parametername-values-malignment" class="nav-link" data-scroll-target="#parametername-values-malignment"><code>ParameterName</code> values malignment</a></li>
   <li><a href="#site-id-malignment" id="toc-site-id-malignment" class="nav-link" data-scroll-target="#site-id-malignment">Site ID malignment</a></li>
   <li><a href="#todo-compare-specific-stations" id="toc-todo-compare-specific-stations" class="nav-link" data-scroll-target="#todo-compare-specific-stations">TODO: compare specific stations</a></li>
+  <li><a href="#compare-distributions-of-nutrient-data" id="toc-compare-distributions-of-nutrient-data" class="nav-link" data-scroll-target="#compare-distributions-of-nutrient-data">compare distributions of nutrient data</a>
+  <ul class="collapse">
+  <li><a href="#ammonia-distribution-across-all-sites" id="toc-ammonia-distribution-across-all-sites" class="nav-link" data-scroll-target="#ammonia-distribution-across-all-sites">Ammonia distribution across all sites</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -188,18 +206,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"librarian"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>librarian<span class="sc">::</span><span class="fu">shelf</span>(</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  ggplot2,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  glue,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  here,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  readxl,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  tidyverse,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  utils</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"R/getIMaRSData.R"</span>))</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>DATA_ROOT <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"./data/02-SEACAR_unzipped"</span>)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>SEACAR_ID <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">".*_WQ_"</span>, <span class="st">""</span>, params<span class="sc">$</span>provider_id)  <span class="co"># Extract the part after _WQ_</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  dplyr,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  ggplot2,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  glue,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  here,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  leaflet,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  mapview,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  readxl,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  sf,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  tidyverse,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  utils</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"R/getIMaRSData.R"</span>))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>DATA_ROOT <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"./data/02-SEACAR_unzipped"</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>SEACAR_ID <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">".*_WQ_"</span>, <span class="st">""</span>, params<span class="sc">$</span>provider_id)  <span class="co"># Extract the part after _WQ_</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
@@ -243,22 +265,97 @@ dbl (13): ...1, Latitude, Longitude, Month, Day, Year, Value, Sample.Depth, ...
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
 </div>
+<section id="station-locations" class="level3">
+<h3 class="anchored" data-anchor-id="station-locations">Station Locations</h3>
+<p>Click to see station names:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>interactive map</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>FCRUWQD_unique <span class="ot">&lt;-</span> <span class="fu">distinct</span>(imars_data, ProgramLocationID, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>SEACAR_unique <span class="ot">&lt;-</span> <span class="fu">distinct</span>(seacar_data, ProgramLocationID, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert dataframes to sf objects, specifying the coordinate columns</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># and keeping only one row for each ProgramLocationID</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>FCRUWQD_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  FCRUWQD_unique, </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"OriginalLongitude"</span>, <span class="st">"OriginalLatitude"</span>), </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">crs =</span> <span class="dv">4326</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>SEACAR_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  SEACAR_unique, </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"OriginalLongitude"</span>, <span class="st">"OriginalLatitude"</span>), </span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">crs =</span> <span class="dv">4326</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a leaflet map</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu">leaflet</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add FCRUWQD points with popups showing station names</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addTiles</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addCircleMarkers</span>(</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> FCRUWQD_sf,</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"blue"</span>, </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">radius =</span> <span class="dv">5</span>,</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">popup =</span> <span class="sc">~</span><span class="fu">paste</span>(<span class="st">"Station:"</span>, FCRUWQD_unique<span class="sc">$</span>ProgramLocationID)  <span class="co"># Display station name on click</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add SEACAR points with popups showing station names</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addCircleMarkers</span>(</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> SEACAR_sf,</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"red"</span>,</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">radius =</span> <span class="dv">5</span>,</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">popup =</span> <span class="sc">~</span><span class="fu">paste</span>(<span class="st">"Station:"</span>, SEACAR_unique<span class="sc">$</span>ProgramLocationID)  <span class="co"># Display station name on click</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addLegend</span>(</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="st">"topright"</span>,</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">colors =</span> <span class="fu">c</span>(<span class="st">"blue"</span>, <span class="st">"red"</span>),</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"FCRUWQD Stations"</span>, <span class="st">"SEACAR Stations"</span>),</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Data Sources"</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item" id="htmlwidget-c41b01add97ec54cc90f" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-c41b01add97ec54cc90f">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"https://openstreetmap.org/copyright/\">OpenStreetMap<\/a>,  <a href=\"https://opendatacommons.org/licenses/odbl/\">ODbL<\/a>"}]},{"method":"addCircleMarkers","args":[[25.59,25.51,25.48053,25.43082,25.41497,25.36443,24.5857,25.325,25.30788,25.29452,25.26312,25.2462,25.23667,25.22,25.17332,25.15897,25.142,25.11355,25.07237,25.06018,25.03082,25.017,25.0084,25.00167,24.97667,24.95012,24.93965,24.925,24.92703,24.87123,24.83265,24.83442,24.80223,24.80247,24.7915,24.745,24.79333,24.71317,24.71318,24.69167,24.675,24.69193,24.60693,24.64537,24.65792,24.62168,24.58497,24.57037,24.6255,24.54843,24.94677,24.61105,24.53008,24.58782,24.55943,24.52162,24.55667,24.50548,24.4929,24.52143,24.47538,24.49862,24.45363,24.495,24.86667,24.87667,24.80998,24.84667,24.88333,24.77775,24.86267,24.81682,24.76312,24.7555,24.85163,24.79152,24.77258,24.80128,24.76852,24.72503,24.69772,24.65752,24.65978,24.75043,24.63325,24.58577,24.575,24.65083,24.629,24.45833,24.65333,24.54167,24.454,24.66533,24.5355,24.57717,24.46083,24.59133,25.1073,24.853,24.63,24.483,25.08534722,25.110525,24.92650278,24.92049722,24.72253889,24.712075,24.65941111,24.69309167,24.57374722,24.55228889],[-80.09999999999999,-80.16500000000001,-80.11767999999999,-80.19553000000001,-80.143,-80.21508,-81.72272,-80.1636,-80.26165,-80.24542,-80.18773,-80.29918000000001,-80.28897000000001,-80.217,-80.33985,-80.29455,-80.258,-80.37342,-80.31277,-80.42312,-80.39527,-80.3674,-80.50148,-80.47490000000001,-80.45,-80.56218,-80.55162,-80.503,-80.59851999999999,-80.66865,-80.64906999999999,-80.74683,-80.7162,-80.80889999999999,-80.81225000000001,-80.78333000000001,-80.86333,-80.85813,-81.01115,-80.96666999999999,-80.95829999999999,-81.18245,-81.15442,-81.30723,-81.26502000000001,-81.24308000000001,-81.23408000000001,-81.32167,-81.41661999999999,-81.39742,-80.45947,-81.50527,-81.4873,-81.57698000000001,-81.55955,-81.56432,-81.66667,-81.65433,-81.6571,-81.74422,-81.73742,-81.81895,-81.84365,-81.89167,-80.88500000000001,-80.95833,-80.92028000000001,-81.00833,-81.08333,-81.033,-81.21623,-81.14678000000001,-81.11248000000001,-81.17218,-81.35123,-81.28908,-81.39664999999999,-81.48227,-81.55500000000001,-81.52052,-81.68317999999999,-81.63265,-81.76343,-81.43577999999999,-81.82827,-81.80240000000001,-81.78833,-81.90467,-82.07133,-81.98166999999999,-82.15833000000001,-82.09999999999999,-82.224,-82.374,-82.36733,-82.49133,-82.38317000000001,-82.58783,-80.3064,-80.622,-81.11199999999999,-81.7,-80.43345832999999,-80.43421111000001,-80.62067222,-80.63476944,-81.043375,-81.10070833,-81.38326944000001,-81.35462778,-81.76013888999999,-81.74940832999999],5,null,null,{"interactive":true,"className":"","stroke":true,"color":"blue","weight":5,"opacity":0.5,"fill":true,"fillColor":"blue","fillOpacity":0.2},null,null,["Station: Fowey Rocks","Station: Sands Key","Station: Triumph Reef","Station: Elliott Key","Station: Ajax Reef","Station: Old Rhodes Key","Station: Channel Key","Station: Old Rhodes Key Reef","Station: Pennekamp G27","Station: Turtle Harbor","Station: Turtle Reef","Station: Port Elizabeth","Station: Carysfort Channel","Station: Carysfort Reef","Station: Rattlesnake Key","Station: White Bank","Station: The Elbow","Station: Radabob Key","Station: Dixie Shoal","Station: Mosquito Bank","Station: Molasses Reef Channel","Station: Molasses Reef","Station: Tavernier Harbor","Station: Triangles","Station: Conch Reef","Station: Plantation Point","Station: The Rocks","Station: Davis Reef","Station: Upper Matecumbe Key","Station: Lower Matecumbe Key","Station: Alligator Reef","Station: Matecumbe Harbor","Station: Lower Matecumbe Channel","Station: Long Key","Station: Long Key Channel","Station: Tennessee Reef","Station: Long Key Pass Inshore","Station: Long Key Pass Offshore","Station: Key Colony Beach","Station: Coffins Patch Channel","Station: Coffins Patch Offshore","Station: Seven Mile Bridge","Station: Sombrero Key","Station: Spanish Harbor Keys","Station: Bahia Honda Key","Station: Bahia Honda Channel","Station: Bahia Honda Offshore","Station: Big Pine Shoal","Station: Newfound Harbor Keys","Station: Looe Key","Station: Aquarius","Station: Tarpon Creek","Station: American Shoal","Station: Saddlebunch Keys","Station: West Washerwoman","Station: Maryland Shoal","Station: Boca Chica Key","Station: Eastern Sambo","Station: Eastern Sambo Offshore","Station: Boca Chica Mid","Station: Western Sambo","Station: Western Head","Station: Eastern Dry Rocks","Station: Middle Ground","Station: Arsenic Bank","Station: Tripod Bank","Station: Channel Key Pass","Station: Bamboo Banks","Station: Sta 288","Station: Bamboo Key","Station: Bluefish Bank","Station: Bullard Bank","Station: John Sawyer Bank","Station: Red Bay Bank","Station: Bullfrog Banks","Station: W. Bahia Honda Key","Station: Cutoe Key","Station: Content Passage","Station: Cudjoe Key","Station: Tarpon Belly Keys","Station: Marvin Key Channel","Station: Snipe Keys","Station: E. Harbor Key Channel","Station: Bluefish Channel","Station: Calda Channel","Station: Man of War Harbor","Station: Garrison Bight","Station: KW Northwest Channel","Station: N Boca Grande Channel","Station: Satan Shoal","Station: Ellis Rock","Station: SE Marquesas","Station: Marquesas Rock","Station: New Ground","Station: S Quicksands","Station: Half Moon Shoal","Station: Sta 335","Station: Rebecca Shoal","Station: Grecian Rocks","Station: Alligator Reef #2","Station: Sombrero Key #2","Station: Western Sambo #2","Station: Lake Largo Canal","Station: Calusa Park Marina","Station: Indian Key","Station: Blackwood Dr","Station: Marathon - Ocean 100th St","Station: Hidden Harbor Beach","Station: LittleTorch","Station: Big Pine Bay","Station: Marriott Beach side","Station: Key West Ocean- Intl airport"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addCircleMarkers","args":[[25.07237,25.00167,24.379,25.11025,24.90185,24.80223,24.64502,24.66667,24.63,24.93965,24.78453,24.745,24.94677,24.55943,24.45,25.29452,25.142,24.58333,24.54843,24.52162,24.45803,24.495,24.629,24.54167,24.59133,24.42833,24.86277,24.71317,24.60693,24.45363,24.65333,24.71667,24.50683,24.51217,24.485,24.706,25.1073,24.7915,24.69167,24.47538,24.4929,24.853,24.8597,24.83265,24.79333,24.54167,25.26312,24.97667,24.62168,24.58497,24.66533,25.30788,24.53008,24.70833,24.65083,24.705,24.5355,24.51762,24.59323,24.58618,24.52143,24.57037,24.61667,24.65483,25.017,24.925,24.49862,24.65167,24.45833,24.454,24.57717,24.755,24.654,24.483,24.76167,24.675,24.81682,24.46083,25.17332,24.55667,24.50548,25.11355,24.58782,24.75043,24.58577,24.87833,25.23667,24.80247,24.9,25.2462,24.71318,24.56333,24.72503,24.69193,24.86667,24.77775,24.77258,24.92650278,24.72253889,24.85163,24.65978,24.575,24.78333,24.86267,24.70882,24.76852,24.83442,24.87667,24.88333,24.80128,24.95012,24.74077,24.69242,24.65792,24.7555,24.79152,25.22,24.84085,24.68737,24.6943,24.69772,24.63325,25.03082,24.92703,24.84667,24.76312,24.69309167,24.57374722,24.80998,24.7122,24.61762,24.7377,24.64157,25.15897,24.87123,24.6255,24.64537,25.06018,25.0084,24.69167,24.77567,24.6656,24.63333,24.61105,24.49103,24.73753,24.84333,24.81667,24.77095,25.2045,24.65752,24.92049722,25.08534722,24.55228889,24.5857,25.00667,24.9175,24.68392,24.83333,25.12587,25.110525,24.65941111,24.72935,24.56683,24.44717,24.55,24.69667,24.586,24.55,24.52833,24.60065,24.95011999,24.93964999,24.92499999,24.92702999,24.87122999,24.83264999,24.83441999,24.80222999,24.80246999,24.79149999,24.74499999,24.79332999,24.71316999,24.71317999,24.69166999,24.67499999,24.69192999,24.60692999,24.64536999,24.65791999,24.52142999,24.47537999,24.49861999,24.45362999,24.49499999,24.86666999,24.87666999,24.80997999,24.84666999,24.88332999,24.77774999,24.86266999,24.81681999,24.76311999,24.75549999,24.85162999,24.79151999,24.77257999,24.80127999,24.76851999,24.72502999,24.69771999,24.65751999,24.65977999,24.75042999,24.63324999,24.58576999,24.57499999,24.65082999,24.62899999,24.45832999,24.65332999,24.62167999,24.54166999,24.69308999,24.65940999,24.57374999,24.55229999,24.45399999,24.66532999,24.53549999,24.57716999,24.46082999,24.59132999,25.10729999,24.85299999,24.62999999,24.48299999,25.08534999,25.11052999,24.92649999,24.92049999,24.72253999,24.58569999,25.30787999,25.29451999,25.26311999,25.24619999,25.23666999,25.21999999,25.17331999,25.15896999,25.14199999,25.11354999,25.07236999,25.06017999,25.03081999,24.58496999,24.57036999,25.01699999,25.00839999,25.00166999,24.97666999,24.62549999,24.54842999,24.94676999,24.61104999,24.53007999,24.58781999,24.55942999,24.52161999,24.55666999,24.50547999,24.49289999,24.84084999],[-80.31277,-80.47490000000001,-82.70466999999999,-80.36087999999999,-80.58238,-80.7162,-81.16508,-83.08333,-81.11199999999999,-80.55162,-80.70569999999999,-80.78333000000001,-80.45947,-81.55955,-82.86667,-80.24542,-80.258,-81.5,-81.39742,-81.56432,-81.81297000000001,-81.89167,-82.07133,-82.09999999999999,-82.58783,-82.51083,-80.56697,-80.85813,-81.15442,-81.84365,-82.15833000000001,-82.54167,-82.28767000000001,-82.45032999999999,-82.65333,-82.74567,-80.3064,-80.81225000000001,-80.96666999999999,-81.73742,-81.6571,-80.622,-80.66240000000001,-80.64906999999999,-80.86333,-81.75,-80.18773,-80.45,-81.24308000000001,-81.23408000000001,-82.374,-80.26165,-81.4873,-82.25,-81.90467,-82.17,-82.36733,-81.8211,-81.32422,-81.41887,-81.74422,-81.32167,-82.22333,-82.64633000000001,-80.3674,-80.503,-81.81895,-82.96666999999999,-81.98166999999999,-82.224,-82.49133,-82.855,-82.99666999999999,-81.7,-80.86167,-80.95829999999999,-81.14678000000001,-82.38317000000001,-80.33985,-81.66667,-81.65433,-80.37342,-81.57698000000001,-81.43577999999999,-81.80240000000001,-81.19167,-80.28897000000001,-80.80889999999999,-81,-80.29918000000001,-81.01115,-82.80500000000001,-81.52052,-81.18245,-80.88500000000001,-81.033,-81.39664999999999,-80.62067222,-81.043375,-81.35123,-81.76343,-81.78833,-80.92395,-81.21623,-81.30923,-81.55500000000001,-80.74683,-80.95833,-81.08333,-81.48227,-80.56218,-81.21118,-81.39198,-81.26502000000001,-81.17218,-81.28908,-80.217,-81.43112000000001,-81.34182,-81.48820000000001,-81.68317999999999,-81.82827,-80.39527,-80.59851999999999,-81.00833,-81.11248000000001,-81.35462778,-81.76013888999999,-80.92028000000001,-81.45157,-81.65008,-81.59247000000001,-81.7321,-80.29455,-80.66865,-81.41661999999999,-81.30723,-80.42312,-80.50148,-81.79167,-81.61783,-80.97762,-81.33732000000001,-81.50527,-81.65048,-81.1093,-81.43832999999999,-81.08333,-80.89945,-80.24424999999999,-81.63265,-80.63476944,-80.43345832999999,-81.74940832999999,-81.72272,-80.37,-80.51533000000001,-80.98309999999999,-81.12833000000001,-80.26477,-80.43421111000001,-81.38326944000001,-80.79348,-82.54517,-82.5945,-82.02833,-82.33667,-82.06032999999999,-83,-82.85333,-81.41486999999999,-80.56218,-80.55162,-80.503,-80.59851999999999,-80.66865,-80.64906999999999,-80.74683,-80.7162,-80.80889999999999,-80.81225000000001,-80.78333000000001,-80.86333,-80.85813,-81.01115,-80.96666999999999,-80.95829999999999,-81.18245,-81.15442,-81.30723,-81.26502000000001,-81.74422,-81.73742,-81.81895,-81.84365,-81.89167,-80.88500000000001,-80.95833,-80.92028000000001,-81.00833,-81.08333,-81.033,-81.21623,-81.14678000000001,-81.11248000000001,-81.17218,-81.35123,-81.28908,-81.39664999999999,-81.48227,-81.55500000000001,-81.52052,-81.68317999999999,-81.63265,-81.76343,-81.43577999999999,-81.82827,-81.80240000000001,-81.78833,-81.90467,-82.07133,-81.98166999999999,-82.15833000000001,-81.24308000000001,-82.09999999999999,-81.35463,-81.38327,-81.76014000000001,-81.74939999999999,-82.224,-82.374,-82.36733,-82.49133,-82.38317000000001,-82.58783,-80.3064,-80.622,-81.11199999999999,-81.7,-80.43346,-80.43420999999999,-80.62067,-80.63477,-81.04338,-81.72272,-80.26165,-80.24542,-80.18773,-80.29918000000001,-80.28897000000001,-80.217,-80.33985,-80.29455,-80.258,-80.37342,-80.31277,-80.42312,-80.39527,-81.23408000000001,-81.32167,-80.3674,-80.50148,-80.47490000000001,-80.45,-81.41661999999999,-81.39742,-80.45947,-81.50527,-81.4873,-81.57698000000001,-81.55955,-81.56432,-81.66667,-81.65433,-81.6571,-81.43112000000001],5,null,null,{"interactive":true,"className":"","stroke":true,"color":"red","weight":5,"opacity":0.5,"fill":true,"fillColor":"red","fillOpacity":0.2},null,null,["Station: 222","Station: 227","Station: 345","Station: 221","Station: 233","Station: 239","Station: 251","Station: 346","Station: 402","Station: 230","Station: 240","Station: 243","Station: 264","Station: 269","Station: 350","Station: 212","Station: 219","Station: 261","Station: 263","Station: 270","Station: 279","Station: 281","Station: 319","Station: 325","Station: 337","Station: 339","Station: 234","Station: 246","Station: 252","Station: 280","Station: 324","Station: 329","Station: 331","Station: 334","Station: 340","Station: 342","Station: 400","Station: 242","Station: 248","Station: 276","Station: 273","Station: 401","Station: 236","Station: 237","Station: 244","Station: 274","Station: 213","Station: 228","Station: 255","Station: 256","Station: 330","Station: 211","Station: 267","Station: 326","Station: 318","Station: 323","Station: 332","Station: 277","Station: 258","Station: 262","Station: 275","Station: 259","Station: 327","Station: 336","Station: 225","Station: 231","Station: 278","Station: 320","Station: 322","Station: 328","Station: 333","Station: 343","Station: 347","Station: 403","Station: 245","Station: 249","Station: 291","Station: 335","Station: 217","Station: 271","Station: 272","Station: 220","Station: 268","Station: 314","Station: 316","Station: 395","Station: 215","Station: 241","Station: 283","Station: 214","Station: 247","Station: 344","Station: 307","Station: 250","Station: 282","Station: 289","Station: 301","Station: 502","Station: 504","Station: 295","Station: 312","Station: 317","Station: 286","Station: 290","Station: 300","Station: 305","Station: 238","Station: 284","Station: 288","Station: 302","Station: 229","Station: 297","Station: 303","Station: 254","Station: 294","Station: 296","Station: 216","Station: 298","Station: 299","Station: 308","Station: 309","Station: 315","Station: 224","Station: 232","Station: 287","Station: 292","Station: 507","Station: 508","Station: 285","Station: 304","Station: 311","Station: 306","Station: 313","Station: 218","Station: 235","Station: 260","Station: 253","Station: 223","Station: 226","Station: 351","Station: 375","Station: 249i","Station: 257","Station: 266","Station: 273i","Station: 293","Station: 376","Station: 265","Station: 244i","Station: 216i","Station: 310","Station: 503","Station: 500","Station: 509","Station: 209","Station: 225i","Station: 231i","Station: 248i","Station: 396","Station: 219i","Station: 501","Station: 506","Station: 243i","Station: 338i","Station: 341i","Station: 321i","Station: 329i","Station: 320i","Station: 349i","Station: 348i","Station: 261i","Station: WIN_21FLFWC_229-W","Station: WIN_21FLFWC_230-W","Station: WIN_21FLFWC_231-W","Station: WIN_21FLFWC_232-W","Station: WIN_21FLFWC_235-W","Station: WIN_21FLFWC_237-W","Station: WIN_21FLFWC_238-W","Station: WIN_21FLFWC_239-W","Station: WIN_21FLFWC_241-W","Station: WIN_21FLFWC_242-W","Station: WIN_21FLFWC_243-W","Station: WIN_21FLFWC_244-W","Station: WIN_21FLFWC_246-W","Station: WIN_21FLFWC_247-W","Station: WIN_21FLFWC_248-W","Station: WIN_21FLFWC_249-W","Station: WIN_21FLFWC_250-W","Station: WIN_21FLFWC_252-W","Station: WIN_21FLFWC_253-W","Station: WIN_21FLFWC_254-W","Station: WIN_21FLFWC_275-W","Station: WIN_21FLFWC_276-W","Station: WIN_21FLFWC_278-W","Station: WIN_21FLFWC_280-W","Station: WIN_21FLFWC_281-W","Station: WIN_21FLFWC_282-W","Station: WIN_21FLFWC_284-W","Station: WIN_21FLFWC_285-W","Station: WIN_21FLFWC_287-W","Station: WIN_21FLFWC_288-W","Station: WIN_21FLFWC_289-W","Station: WIN_21FLFWC_290-W","Station: WIN_21FLFWC_291-W","Station: WIN_21FLFWC_292-W","Station: WIN_21FLFWC_294-W","Station: WIN_21FLFWC_295-W","Station: WIN_21FLFWC_296-W","Station: WIN_21FLFWC_301-W","Station: WIN_21FLFWC_302-W","Station: WIN_21FLFWC_305-W","Station: WIN_21FLFWC_307-W","Station: WIN_21FLFWC_309-W","Station: WIN_21FLFWC_310-W","Station: WIN_21FLFWC_312-W","Station: WIN_21FLFWC_314-W","Station: WIN_21FLFWC_315-W","Station: WIN_21FLFWC_316-W","Station: WIN_21FLFWC_317-W","Station: WIN_21FLFWC_318-W","Station: WIN_21FLFWC_319-W","Station: WIN_21FLFWC_322-W","Station: WIN_21FLFWC_324-W","Station: WIN_21FLFWC_255-W","Station: WIN_21FLFWC_325-W","Station: WIN_21FLFWC_507-W","Station: WIN_21FLFWC_506-W","Station: WIN_21FLFWC_508-W","Station: WIN_21FLFWC_509-W","Station: WIN_21FLFWC_328-W","Station: WIN_21FLFWC_330-W","Station: WIN_21FLFWC_332-W","Station: WIN_21FLFWC_333-W","Station: WIN_21FLFWC_335-W","Station: WIN_21FLFWC_337-W","Station: WIN_21FLFWC_400-W","Station: WIN_21FLFWC_401-W","Station: WIN_21FLFWC_402-W","Station: WIN_21FLFWC_403-W","Station: WIN_21FLFWC_500-W","Station: WIN_21FLFWC_501-W","Station: WIN_21FLFWC_502-W","Station: WIN_21FLFWC_503-W","Station: WIN_21FLFWC_504-W","Station: WIN_21FLFWC_209-W","Station: WIN_21FLFWC_211-W","Station: WIN_21FLFWC_212-W","Station: WIN_21FLFWC_213-W","Station: WIN_21FLFWC_214-W","Station: WIN_21FLFWC_215-W","Station: WIN_21FLFWC_216-W","Station: WIN_21FLFWC_217-W","Station: WIN_21FLFWC_218-W","Station: WIN_21FLFWC_219-W","Station: WIN_21FLFWC_220-W","Station: WIN_21FLFWC_222-W","Station: WIN_21FLFWC_223-W","Station: WIN_21FLFWC_224-W","Station: WIN_21FLFWC_256-W","Station: WIN_21FLFWC_259-W","Station: WIN_21FLFWC_225-W","Station: WIN_21FLFWC_226-W","Station: WIN_21FLFWC_227-W","Station: WIN_21FLFWC_228-W","Station: WIN_21FLFWC_260-W","Station: WIN_21FLFWC_263-W","Station: WIN_21FLFWC_264-W","Station: WIN_21FLFWC_266-W","Station: WIN_21FLFWC_267-W","Station: WIN_21FLFWC_268-W","Station: WIN_21FLFWC_269-W","Station: WIN_21FLFWC_270-W","Station: WIN_21FLFWC_271-W","Station: WIN_21FLFWC_272-W","Station: WIN_21FLFWC_273-W","Station: WIN_21FLFWC_298-W"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addLegend","args":[{"colors":["blue","red"],"labels":["FCRUWQD Stations","SEACAR Stations"],"na_color":null,"na_label":"NA","opacity":0.5,"position":"topright","type":"unknown","title":"Data Sources","extra":null,"layerId":null,"className":"info legend","group":null}]}],"limits":{"lat":[24.379,25.59],"lng":[-83.08333,-80.09999999999999]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>non-interactive map for thumbnail preview</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the base map with ggplot</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add FCRUWQD points</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> FCRUWQD_sf, <span class="fu">aes</span>(<span class="at">color =</span> <span class="st">"FCRUWQD"</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add SEACAR points</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> SEACAR_sf, <span class="fu">aes</span>(<span class="at">color =</span> <span class="st">"SEACAR"</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Customize color mapping</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"FCRUWQD"</span> <span class="ot">=</span> <span class="st">"blue"</span>, <span class="st">"SEACAR"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add labels and legend</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Map with Points from FCRUWQD and SEACAR"</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Data Source"</span>) <span class="sc">+</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="SERC_FKNMS_WQ_297_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
 <section id="parametername-values-malignment" class="level3">
 <h3 class="anchored" data-anchor-id="parametername-values-malignment"><code>ParameterName</code> values malignment</h3>
 <p><code>ParameterName</code> columns have different values for same data. Some columns appear to not exist in both.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>print unique values for param name</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"=== IMaRS ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>(imars_data<span class="sc">$</span>ParameterName), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"=== SEACAR ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>(seacar_data<span class="sc">$</span>ParameterName)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"=== FCRUWQD ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>(imars_data<span class="sc">$</span>ParameterName), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"=== SEACAR ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>(seacar_data<span class="sc">$</span>ParameterName)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>=== IMaRS ==========================
-  
+<pre><code>=== FCRUWQD ==========================
+ Chlorophyll a Ammonium (N) Nitrate-Nitrite (N) Nitrite (N) Nitrate (N) Silica Nitrogen- Total Nitrogen- Total Kjeldahl Phosphorus- Total Turbidity 
  === SEACAR ==========================
  NO2+3, Filtered Turbidity Ammonium, Filtered (NH4) Dissolved Oxygen Saturation Dissolved Oxygen Light Extinction Coefficient Salinity Water Temperature pH Total Phosphorus Total Nitrogen Chlorophyll a, Uncorrected for Pheophytin Nitrite (NO2)</code></pre>
 </div>
@@ -266,85 +363,36 @@ dbl (13): ...1, Latitude, Longitude, Month, Day, Year, Value, Sample.Depth, ...
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of points for each reporting provider in SEACAR and DEP data</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>seacar_count <span class="ot">&lt;-</span> seacar_data <span class="sc">%&gt;%</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ParameterName) <span class="sc">%&gt;%</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>())</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>imars_count <span class="ot">&lt;-</span> imars_data <span class="sc">%&gt;%</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ParameterName) <span class="sc">%&gt;%</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>())</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine and display the results</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>comparison_count <span class="ot">&lt;-</span> <span class="fu">full_join</span>(seacar_count, imars_count, <span class="at">by =</span> <span class="st">"ParameterName"</span>, <span class="at">suffix =</span> <span class="fu">c</span>(<span class="st">"_SEACAR"</span>, <span class="st">"_IMaRS"</span>))</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>comparison_count</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of points for each reporting provider in SEACAR and DEP data</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>seacar_count <span class="ot">&lt;-</span> seacar_data <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ParameterName) <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>())</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>imars_count <span class="ot">&lt;-</span> imars_data <span class="sc">%&gt;%</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ParameterName) <span class="sc">%&gt;%</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>())</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine and display the results</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>comparison_count <span class="ot">&lt;-</span> <span class="fu">full_join</span>(seacar_count, imars_count, <span class="at">by =</span> <span class="st">"ParameterName"</span>, <span class="at">suffix =</span> <span class="fu">c</span>(<span class="st">"_SEACAR"</span>, <span class="st">"_FCRUWQD"</span>))</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: print all rows here</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>comparison_count</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 13 × 3
-   ParameterName                             count_SEACAR count_IMaRS
-   &lt;chr&gt;                                            &lt;int&gt;       &lt;int&gt;
- 1 Ammonium, Filtered (NH4)                         26070          NA
- 2 Chlorophyll a, Uncorrected for Pheophytin        16171          NA
- 3 Dissolved Oxygen                                 32280          NA
- 4 Dissolved Oxygen Saturation                      25531          NA
- 5 Light Extinction Coefficient                     10436          NA
- 6 NO2+3, Filtered                                  20636          NA
- 7 Nitrite (NO2)                                     5776          NA
- 8 Salinity                                         31952          NA
- 9 Total Nitrogen                                   26749          NA
-10 Total Phosphorus                                 26833          NA
-11 Turbidity                                        26815          NA
-12 Water Temperature                                31913          NA
-13 pH                                                 114          NA</code></pre>
-</div>
-</div>
-</section>
-<section id="ammonia-distribution-across-all-sites" class="level3">
-<h3 class="anchored" data-anchor-id="ammonia-distribution-across-all-sites">Ammonia distribution across all sites</h3>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select relevant nutrient columns from SEACAR and DEP datasets</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot distributions side by side for SEACAR and IMaRS (DEP)</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the datasets with a new column to identify the source</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  seacar_data <span class="sc">%&gt;%</span> </span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(ParameterName, ResultValue) <span class="sc">%&gt;%</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(ParameterName <span class="sc">==</span> <span class="st">"Ammonium, Filtered (NH4)"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Source =</span> <span class="st">"SEACAR"</span>),</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  imars_data <span class="sc">%&gt;%</span> </span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(ParameterName, ResultValue) <span class="sc">%&gt;%</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(ParameterName <span class="sc">==</span> <span class="st">"Ammonium (N)"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Source =</span> <span class="st">"IMaRS"</span>)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot side-by-side distributions with log-scaled x-axis</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(combined_data, <span class="fu">aes</span>(<span class="at">x =</span> ResultValue, <span class="at">fill =</span> Source)) <span class="sc">+</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ammonium Distributions: SEACAR vs IMaRS (Log Scale)"</span>,</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Nutrient Value (Log Scale)"</span>,</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Density"</span>,</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Source"</span>) <span class="sc">+</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span>   <span class="co"># Log scale on the x-axis</span></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in transformation$transform(x): NaNs produced</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in scale_x_log10(): log-10 transformation introduced infinite values.</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 30 rows containing non-finite outside the scale range
-(`stat_density()`).</code></pre>
-</div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="SERC_FKNMS_WQ_297_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
+<pre><code># A tibble: 22 × 3
+   ParameterName                             count_SEACAR count_FCRUWQD
+   &lt;chr&gt;                                            &lt;int&gt;         &lt;int&gt;
+ 1 Ammonium, Filtered (NH4)                         26070            NA
+ 2 Chlorophyll a, Uncorrected for Pheophytin        16171            NA
+ 3 Dissolved Oxygen                                 32280            NA
+ 4 Dissolved Oxygen Saturation                      25531            NA
+ 5 Light Extinction Coefficient                     10436            NA
+ 6 NO2+3, Filtered                                  20636            NA
+ 7 Nitrite (NO2)                                     5776            NA
+ 8 Salinity                                         31952            NA
+ 9 Total Nitrogen                                   26749            NA
+10 Total Phosphorus                                 26833            NA
+# ℹ 12 more rows</code></pre>
 </div>
 </div>
 </section>
@@ -354,59 +402,134 @@ dbl (13): ...1, Latitude, Longitude, Month, Day, Year, Value, Sample.Depth, ...
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>imars_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(imars_data<span class="sc">$</span>ProgramLocationID))</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>seacar_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(seacar_data<span class="sc">$</span>ProgramLocationID))</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== IMaRS ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  imars_sites[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"=== SEACAR ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  seacar_sites[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>imars_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(imars_data<span class="sc">$</span>ProgramLocationID))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>seacar_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(seacar_data<span class="sc">$</span>ProgramLocationID))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== FCRUWQD ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  imars_sites[<span class="dv">1</span><span class="sc">:</span><span class="dv">25</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"=== SEACAR ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  seacar_sites[<span class="dv">1</span><span class="sc">:</span><span class="dv">25</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>=== IMaRS ==========================
- NA NA NA NA NA 
+<pre><code>=== FCRUWQD ==========================
+ Ajax Reef Alligator Reef Alligator Reef #2 American Shoal Aquarius Arsenic Bank Bahia Honda Channel Bahia Honda Key Bahia Honda Offshore Bamboo Banks Bamboo Key Big Pine Bay Big Pine Shoal Blackwood Dr Bluefish Bank Bluefish Channel Boca Chica Key Boca Chica Mid Bullard Bank Bullfrog Banks Calda Channel Calusa Park Marina Carysfort Channel Carysfort Reef Channel Key 
  === SEACAR ==========================
- 209 211 212 213 214 </code></pre>
+ 209 211 212 213 214 215 216 216i 217 218 219 219i 220 221 222 223 224 225 225i 226 227 228 229 230 231 </code></pre>
 </div>
 </div>
 <p>SEACAR data has many more site names</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"=== IMaRS =========================="</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"=== FCRUWQD =========================="</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "=== IMaRS =========================="</code></pre>
+<pre><code>[1] "=== FCRUWQD =========================="</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">length</span>(imars_sites))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">length</span>(imars_sites))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0</code></pre>
+<pre><code>[1] 112</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"=== SEACAR =========================="</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"=== SEACAR =========================="</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "=== SEACAR =========================="</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">length</span>(seacar_sites))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">length</span>(seacar_sites))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 276</code></pre>
 </div>
 </div>
+<section id="alternative-site-id-vs-areaid" class="level4">
+<h4 class="anchored" data-anchor-id="alternative-site-id-vs-areaid">Alternative Site ID vs AreaID</h4>
+<p>SEACAR also has <code>AreaID</code>s, but these also do not align with Site IDs. There are only 7 <code>AreaID</code>s.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>imars_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(imars_data<span class="sc">$</span>ProgramLocationID))</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>seacar_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(seacar_data<span class="sc">$</span>AreaID))</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== FCRUWQD ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  imars_sites[<span class="dv">1</span><span class="sc">:</span><span class="dv">25</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"=== SEACAR ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  seacar_sites[<span class="dv">1</span><span class="sc">:</span><span class="dv">25</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== FCRUWQD ==========================
+ Ajax Reef Alligator Reef Alligator Reef #2 American Shoal Aquarius Arsenic Bank Bahia Honda Channel Bahia Honda Key Bahia Honda Offshore Bamboo Banks Bamboo Key Big Pine Bay Big Pine Shoal Blackwood Dr Bluefish Bank Bluefish Channel Boca Chica Key Boca Chica Mid Bullard Bank Bullfrog Banks Calda Channel Calusa Park Marina Carysfort Channel Carysfort Reef Channel Key 
+ === SEACAR ==========================
+ 13 15 NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA </code></pre>
+</div>
+</div>
+</section>
 </section>
 <section id="todo-compare-specific-stations" class="level3">
 <h3 class="anchored" data-anchor-id="todo-compare-specific-stations">TODO: compare specific stations</h3>
 <p>Cannot compare within stations until station number mapping is completed (see above section about station id malignment).</p>
+</section>
+<section id="compare-distributions-of-nutrient-data" class="level2">
+<h2 class="anchored" data-anchor-id="compare-distributions-of-nutrient-data">compare distributions of nutrient data</h2>
+<section id="ammonia-distribution-across-all-sites" class="level3">
+<h3 class="anchored" data-anchor-id="ammonia-distribution-across-all-sites">Ammonia distribution across all sites</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select relevant nutrient columns from SEACAR and DEP datasets</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot distributions side by side for SEACAR and FCRUWQD</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the datasets with a new column to identify the source</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  seacar_data <span class="sc">%&gt;%</span> </span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(ParameterName, ResultValue) <span class="sc">%&gt;%</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(ParameterName <span class="sc">==</span> <span class="st">"Ammonium, Filtered (NH4)"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Source =</span> <span class="st">"SEACAR"</span>),</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  imars_data <span class="sc">%&gt;%</span> </span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(ParameterName, ResultValue) <span class="sc">%&gt;%</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(ParameterName <span class="sc">==</span> <span class="st">"Ammonium (N)"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Source =</span> <span class="st">"FCRUWQD"</span>)</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot side-by-side distributions with log-scaled x-axis</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(combined_data, <span class="fu">aes</span>(<span class="at">x =</span> ResultValue, <span class="at">fill =</span> Source)) <span class="sc">+</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ammonium Distributions: SEACAR vs FCRUWQD (Log Scale)"</span>,</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Nutrient Value (Log Scale)"</span>,</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Density"</span>,</span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Source"</span>) <span class="sc">+</span></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span>   <span class="co"># Log scale on the x-axis</span></span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in transformation$transform(x): NaNs produced</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in scale_x_log10(): log-10 transformation introduced infinite values.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 66 rows containing non-finite outside the scale range
+(`stat_density()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="SERC_FKNMS_WQ_297_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -502,7 +625,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/USF-IMARS\.github\.io\/dep-seacar-data-compare\/");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }

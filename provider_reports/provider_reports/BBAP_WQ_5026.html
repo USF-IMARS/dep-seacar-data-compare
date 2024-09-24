@@ -101,6 +101,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<link href="../../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="../../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="../../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="../../site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet">
+<script src="../../site_libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="../../site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet">
+<script src="../../site_libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="../../site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="../../site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
+<script src="../../site_libs/leaflet-binding-2.2.2/leaflet.js"></script>
 
 
 <link rel="stylesheet" href="../../styles.css">
@@ -131,6 +141,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="../../provider_reports/provider_reports.html"> 
 <span class="menu-text">Provider Reports</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/USF-IMARS/dep-seacar-data-compare"> 
+<span class="menu-text">Source Code on GitHub</span></a>
+  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -147,10 +161,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#parametername-values-malignment" id="toc-parametername-values-malignment" class="nav-link active" data-scroll-target="#parametername-values-malignment"><code>ParameterName</code> values malignment</a></li>
-  <li><a href="#ammonia-distribution-across-all-sites" id="toc-ammonia-distribution-across-all-sites" class="nav-link" data-scroll-target="#ammonia-distribution-across-all-sites">Ammonia distribution across all sites</a></li>
+  <li><a href="#station-locations" id="toc-station-locations" class="nav-link active" data-scroll-target="#station-locations">Station Locations</a></li>
+  <li><a href="#parametername-values-malignment" id="toc-parametername-values-malignment" class="nav-link" data-scroll-target="#parametername-values-malignment"><code>ParameterName</code> values malignment</a></li>
   <li><a href="#site-id-malignment" id="toc-site-id-malignment" class="nav-link" data-scroll-target="#site-id-malignment">Site ID malignment</a></li>
   <li><a href="#todo-compare-specific-stations" id="toc-todo-compare-specific-stations" class="nav-link" data-scroll-target="#todo-compare-specific-stations">TODO: compare specific stations</a></li>
+  <li><a href="#compare-distributions-of-nutrient-data" id="toc-compare-distributions-of-nutrient-data" class="nav-link" data-scroll-target="#compare-distributions-of-nutrient-data">compare distributions of nutrient data</a>
+  <ul class="collapse">
+  <li><a href="#ammonia-distribution-across-all-sites" id="toc-ammonia-distribution-across-all-sites" class="nav-link" data-scroll-target="#ammonia-distribution-across-all-sites">Ammonia distribution across all sites</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -188,18 +206,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">"librarian"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>librarian<span class="sc">::</span><span class="fu">shelf</span>(</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  ggplot2,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  glue,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  here,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  readxl,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  tidyverse,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  utils</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"R/getIMaRSData.R"</span>))</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>DATA_ROOT <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"./data/02-SEACAR_unzipped"</span>)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>SEACAR_ID <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">".*_WQ_"</span>, <span class="st">""</span>, params<span class="sc">$</span>provider_id)  <span class="co"># Extract the part after _WQ_</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  dplyr,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  ggplot2,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  glue,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  here,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  leaflet,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  mapview,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  readxl,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  sf,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  tidyverse,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  utils</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">"R/getIMaRSData.R"</span>))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>DATA_ROOT <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"./data/02-SEACAR_unzipped"</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>SEACAR_ID <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">".*_WQ_"</span>, <span class="st">""</span>, params<span class="sc">$</span>provider_id)  <span class="co"># Extract the part after _WQ_</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
@@ -243,21 +265,96 @@ dbl (13): ...1, Latitude, Longitude, Month, Day, Year, Value, Sample.Depth, ...
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
 </div>
+<section id="station-locations" class="level3">
+<h3 class="anchored" data-anchor-id="station-locations">Station Locations</h3>
+<p>Click to see station names:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>interactive map</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>FCRUWQD_unique <span class="ot">&lt;-</span> <span class="fu">distinct</span>(imars_data, ProgramLocationID, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>SEACAR_unique <span class="ot">&lt;-</span> <span class="fu">distinct</span>(seacar_data, ProgramLocationID, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert dataframes to sf objects, specifying the coordinate columns</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># and keeping only one row for each ProgramLocationID</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>FCRUWQD_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  FCRUWQD_unique, </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"OriginalLongitude"</span>, <span class="st">"OriginalLatitude"</span>), </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">crs =</span> <span class="dv">4326</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>SEACAR_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  SEACAR_unique, </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"OriginalLongitude"</span>, <span class="st">"OriginalLatitude"</span>), </span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">crs =</span> <span class="dv">4326</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a leaflet map</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu">leaflet</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add FCRUWQD points with popups showing station names</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addTiles</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addCircleMarkers</span>(</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> FCRUWQD_sf,</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"blue"</span>, </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">radius =</span> <span class="dv">5</span>,</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">popup =</span> <span class="sc">~</span><span class="fu">paste</span>(<span class="st">"Station:"</span>, FCRUWQD_unique<span class="sc">$</span>ProgramLocationID)  <span class="co"># Display station name on click</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add SEACAR points with popups showing station names</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addCircleMarkers</span>(</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> SEACAR_sf,</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"red"</span>,</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">radius =</span> <span class="dv">5</span>,</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">popup =</span> <span class="sc">~</span><span class="fu">paste</span>(<span class="st">"Station:"</span>, SEACAR_unique<span class="sc">$</span>ProgramLocationID)  <span class="co"># Display station name on click</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addLegend</span>(</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="st">"topright"</span>,</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">colors =</span> <span class="fu">c</span>(<span class="st">"blue"</span>, <span class="st">"red"</span>),</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"FCRUWQD Stations"</span>, <span class="st">"SEACAR Stations"</span>),</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Data Sources"</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item" id="htmlwidget-37a5b5d75d843d1854d0" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-37a5b5d75d843d1854d0">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"https://openstreetmap.org/copyright/\">OpenStreetMap<\/a>,  <a href=\"https://opendatacommons.org/licenses/odbl/\">ODbL<\/a>"}]},{"method":"addCircleMarkers","args":[[25.83,25.8169,25.8468,25.8165,25.8533,25.849,25.8057,25.8047,25.826,25.8398,25.8628,25.8217,25.853524,25.80939,25.871488,25.7773,25.8072,25.7698,25.7633,25.7524,25.758,25.7699,25.7597,25.7513,25.8009],[-80.15860000000001,-80.1782,-80.1829,-80.14700000000001,-80.1455,-80.1716,-80.15260000000001,-80.1794,-80.1341,-80.1704,-80.16970000000001,-80.15130000000001,-80.19291,-80.13521,-80.231037,-80.20399999999999,-80.2599,-80.18085000000001,-80.1609,-80.19540000000001,-80.1677,-80.1865,-80.1776,-80.1585,-80.1591],5,null,null,{"interactive":true,"className":"","stroke":true,"color":"blue","weight":5,"opacity":0.5,"fill":true,"fillColor":"blue","fillOpacity":0.2},null,null,["Station: BB14","Station: JT61","Station: LR03","Station: JT66","Station: WQ02","Station: WQ01","Station: VR01","Station: VR11","Station: WQ04","Station: DM08","Station: JFK03","Station: JT71","Station: LR06","Station: WQ05A","Station: LR05","Station: MRDW","Station: MRSC","Station: MRRB","Station: CWA5","Station: RB1A","Station: CWA4","Station: MRMO","Station: BH22","Station: CWA2","Station: VS01"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addCircleMarkers","args":[[25.849503,25.8398,25.808136,25.83788333,25.83983333,25.846841,25.862823,25.85331,25.826002,25.804721,25.81688333,25.81647,25.83003,25.82173,25.805679,25.849008,25.832759,25.8269826,25.83279,25.83025,25.82006,25.88397,25.88347,25.87168,25.82999999,25.75969999,25.75129999,25.75799999,25.76329999,25.83979999,25.83024999,25.83789999,25.83278999,25.86279999,25.82005999,25.88346999,25.83979999,25.81689999,25.87167999,25.81649999,25.82169999,25.84679999,25.77729999,25.76989999,25.76979999,25.78589999,25.75239999,25.80569999,25.80469999,25.84899999,25.85329999,25.84949999,25.82599999,25.80809999,25.80089999,25.88396999,25.82698199,25.83275899],[-80.13208899999999,-80.14168333000001,-80.14080800000001,-80.17753333,-80.17035,-80.182861,-80.16974,-80.14549700000001,-80.13408200000001,-80.1794,-80.17816667,-80.14700000000001,-80.15860000000001,-80.15125,-80.152557,-80.171621,-80.1807651,-80.17938839999999,-80.17981,-80.16968,-80.16591,-80.13784,-80.15497999999999,-80.16445,-80.15860000000001,-80.1776,-80.1585,-80.1677,-80.1609,-80.1704,-80.16968,-80.17749999999999,-80.17981,-80.16970000000001,-80.16591,-80.15497999999999,-80.1417,-80.1782,-80.16445,-80.14700000000001,-80.15130000000001,-80.1829,-80.20399999999999,-80.1865,-80.18085000000001,-80.2251,-80.19540000000001,-80.15260000000001,-80.1794,-80.1716,-80.1455,-80.13209999999999,-80.1341,-80.1408,-80.1591,-80.13784,-80.179388,-80.18076499999999],5,null,null,{"interactive":true,"className":"","stroke":true,"color":"red","weight":5,"opacity":0.5,"fill":true,"fillColor":"red","fillOpacity":0.2},null,null,["Station: WQ03","Station: JT29","Station: WQ05","Station: DM28","Station: DM08","Station: LR03","Station: JFK03","Station: WQ02","Station: WQ04","Station: VR11","Station: JT61","Station: JT66","Station: BB14","Station: JT71","Station: VR01","Station: WQ01","Station: TOW1","Station: TOW2","Station: FK02","Station: DM00","Station: FK01","Station: JFKA","Station: JFKB","Station: JFKC","Station: WIN_21FLBBAP_BB14","Station: WIN_21FLBBAP_BH22","Station: WIN_21FLBBAP_CWA2","Station: WIN_21FLBBAP_CWA4","Station: WIN_21FLBBAP_CWA5","Station: WIN_21FLBBAP_DM08","Station: WIN_21FLBBAP_DM00","Station: WIN_21FLBBAP_DM28","Station: WIN_21FLBBAP_FK02","Station: WIN_21FLBBAP_JFK03","Station: WIN_21FLBBAP_FK01","Station: WIN_21FLBBAP_JFKB","Station: WIN_21FLBBAP_JT29","Station: WIN_21FLBBAP_JT61","Station: WIN_21FLBBAP_JFKC","Station: WIN_21FLBBAP_JT66","Station: WIN_21FLBBAP_JT71","Station: WIN_21FLBBAP_LR03","Station: WIN_21FLBBAP_MRDW","Station: WIN_21FLBBAP_MRMO","Station: WIN_21FLBBAP_MRRB","Station: WIN_21FLBBAP_MRDC","Station: WIN_21FLBBAP_RB1A","Station: WIN_21FLBBAP_VR01","Station: WIN_21FLBBAP_VR11","Station: WIN_21FLBBAP_WQ01","Station: WIN_21FLBBAP_WQ02","Station: WIN_21FLBBAP_WQ03","Station: WIN_21FLBBAP_WQ04","Station: WIN_21FLBBAP_WQ05","Station: WIN_21FLBBAP_VS01","Station: WIN_21FLBBAP_JFKA","Station: WIN_21FLBBAP_TOW2","Station: WIN_21FLBBAP_TOW1"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addLegend","args":[{"colors":["blue","red"],"labels":["FCRUWQD Stations","SEACAR Stations"],"na_color":null,"na_label":"NA","opacity":0.5,"position":"topright","type":"unknown","title":"Data Sources","extra":null,"layerId":null,"className":"info legend","group":null}]}],"limits":{"lat":[25.75129999,25.88397],"lng":[-80.2599,-80.13208899999999]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>non-interactive map for thumbnail preview</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the base map with ggplot</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add FCRUWQD points</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> FCRUWQD_sf, <span class="fu">aes</span>(<span class="at">color =</span> <span class="st">"FCRUWQD"</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add SEACAR points</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> SEACAR_sf, <span class="fu">aes</span>(<span class="at">color =</span> <span class="st">"SEACAR"</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Customize color mapping</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"FCRUWQD"</span> <span class="ot">=</span> <span class="st">"blue"</span>, <span class="st">"SEACAR"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add labels and legend</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Map with Points from FCRUWQD and SEACAR"</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Data Source"</span>) <span class="sc">+</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="BBAP_WQ_5026_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
 <section id="parametername-values-malignment" class="level3">
 <h3 class="anchored" data-anchor-id="parametername-values-malignment"><code>ParameterName</code> values malignment</h3>
 <p><code>ParameterName</code> columns have different values for same data. Some columns appear to not exist in both.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>print unique values for param name</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"=== IMaRS ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>(imars_data<span class="sc">$</span>ParameterName), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"=== SEACAR ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>(seacar_data<span class="sc">$</span>ParameterName)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"=== FCRUWQD ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>(imars_data<span class="sc">$</span>ParameterName), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"=== SEACAR ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>(seacar_data<span class="sc">$</span>ParameterName)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>=== IMaRS ==========================
+<pre><code>=== FCRUWQD ==========================
  Chlorophyll a Ammonium (N) Nitrate-Nitrite (N) Nitrogen- Total Kjeldahl Phosphorus- Total Ammonia (N) 
  === SEACAR ==========================
  Chlorophyll a, Uncorrected for Pheophytin Secchi Depth Chlorophyll a, Corrected for Pheophytin Total Suspended Solids Total Phosphorus Total Kjeldahl Nitrogen NO2+3, Filtered Dissolved Oxygen Dissolved Oxygen Saturation pH Salinity Turbidity Water Temperature Specific Conductivity Ammonium, Filtered (NH4) Total Nitrogen</code></pre>
@@ -266,73 +363,36 @@ dbl (13): ...1, Latitude, Longitude, Month, Day, Year, Value, Sample.Depth, ...
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of points for each reporting provider in SEACAR and DEP data</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>seacar_count <span class="ot">&lt;-</span> seacar_data <span class="sc">%&gt;%</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ParameterName) <span class="sc">%&gt;%</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>())</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>imars_count <span class="ot">&lt;-</span> imars_data <span class="sc">%&gt;%</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ParameterName) <span class="sc">%&gt;%</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>())</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine and display the results</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>comparison_count <span class="ot">&lt;-</span> <span class="fu">full_join</span>(seacar_count, imars_count, <span class="at">by =</span> <span class="st">"ParameterName"</span>, <span class="at">suffix =</span> <span class="fu">c</span>(<span class="st">"_SEACAR"</span>, <span class="st">"_IMaRS"</span>))</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>comparison_count</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of points for each reporting provider in SEACAR and DEP data</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>seacar_count <span class="ot">&lt;-</span> seacar_data <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ParameterName) <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>())</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>imars_count <span class="ot">&lt;-</span> imars_data <span class="sc">%&gt;%</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ParameterName) <span class="sc">%&gt;%</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>())</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine and display the results</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>comparison_count <span class="ot">&lt;-</span> <span class="fu">full_join</span>(seacar_count, imars_count, <span class="at">by =</span> <span class="st">"ParameterName"</span>, <span class="at">suffix =</span> <span class="fu">c</span>(<span class="st">"_SEACAR"</span>, <span class="st">"_FCRUWQD"</span>))</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: print all rows here</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>comparison_count</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 22 × 3
-   ParameterName                             count_SEACAR count_IMaRS
-   &lt;chr&gt;                                            &lt;int&gt;       &lt;int&gt;
- 1 Ammonium, Filtered (NH4)                          1147          NA
- 2 Chlorophyll a, Corrected for Pheophytin            287          NA
- 3 Chlorophyll a, Uncorrected for Pheophytin          410          NA
- 4 Dissolved Oxygen                                  1442          NA
- 5 Dissolved Oxygen Saturation                        491          NA
- 6 NO2+3, Filtered                                   1511          NA
- 7 Salinity                                           436          NA
- 8 Secchi Depth                                       426          NA
- 9 Specific Conductivity                             1091          NA
-10 Total Kjeldahl Nitrogen                           1520          NA
+   ParameterName                             count_SEACAR count_FCRUWQD
+   &lt;chr&gt;                                            &lt;int&gt;         &lt;int&gt;
+ 1 Ammonium, Filtered (NH4)                          1147            NA
+ 2 Chlorophyll a, Corrected for Pheophytin            287            NA
+ 3 Chlorophyll a, Uncorrected for Pheophytin          410            NA
+ 4 Dissolved Oxygen                                  1442            NA
+ 5 Dissolved Oxygen Saturation                        491            NA
+ 6 NO2+3, Filtered                                   1511            NA
+ 7 Salinity                                           436            NA
+ 8 Secchi Depth                                       426            NA
+ 9 Specific Conductivity                             1091            NA
+10 Total Kjeldahl Nitrogen                           1520            NA
 # ℹ 12 more rows</code></pre>
-</div>
-</div>
-</section>
-<section id="ammonia-distribution-across-all-sites" class="level3">
-<h3 class="anchored" data-anchor-id="ammonia-distribution-across-all-sites">Ammonia distribution across all sites</h3>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select relevant nutrient columns from SEACAR and DEP datasets</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot distributions side by side for SEACAR and IMaRS (DEP)</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the datasets with a new column to identify the source</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  seacar_data <span class="sc">%&gt;%</span> </span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(ParameterName, ResultValue) <span class="sc">%&gt;%</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(ParameterName <span class="sc">==</span> <span class="st">"Ammonium, Filtered (NH4)"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Source =</span> <span class="st">"SEACAR"</span>),</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  imars_data <span class="sc">%&gt;%</span> </span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(ParameterName, ResultValue) <span class="sc">%&gt;%</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(ParameterName <span class="sc">==</span> <span class="st">"Ammonium (N)"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Source =</span> <span class="st">"IMaRS"</span>)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot side-by-side distributions with log-scaled x-axis</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(combined_data, <span class="fu">aes</span>(<span class="at">x =</span> ResultValue, <span class="at">fill =</span> Source)) <span class="sc">+</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ammonium Distributions: SEACAR vs IMaRS (Log Scale)"</span>,</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Nutrient Value (Log Scale)"</span>,</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Density"</span>,</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Source"</span>) <span class="sc">+</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span>   <span class="co"># Log scale on the x-axis</span></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="BBAP_WQ_5026_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
 </div>
 </div>
 </section>
@@ -342,59 +402,124 @@ dbl (13): ...1, Latitude, Longitude, Month, Day, Year, Value, Sample.Depth, ...
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>imars_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(imars_data<span class="sc">$</span>ProgramLocationID))</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>seacar_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(seacar_data<span class="sc">$</span>ProgramLocationID))</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== IMaRS ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  imars_sites[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"=== SEACAR ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  seacar_sites[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>imars_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(imars_data<span class="sc">$</span>ProgramLocationID))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>seacar_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(seacar_data<span class="sc">$</span>ProgramLocationID))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== FCRUWQD ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  imars_sites[<span class="dv">1</span><span class="sc">:</span><span class="dv">25</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"=== SEACAR ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  seacar_sites[<span class="dv">1</span><span class="sc">:</span><span class="dv">25</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>=== IMaRS ==========================
- BB14 BH22 CWA2 CWA4 CWA5 
+<pre><code>=== FCRUWQD ==========================
+ BB14 BH22 CWA2 CWA4 CWA5 DM08 JFK03 JT61 JT66 JT71 LR03 LR05 LR06 MRDW MRMO MRRB MRSC RB1A VR01 VR11 VS01 WQ01 WQ02 WQ04 WQ05A 
  === SEACAR ==========================
- BB14 DM00 DM08 DM28 FK01 </code></pre>
+ BB14 DM00 DM08 DM28 FK01 FK02 JFK03 JFKA JFKB JFKC JT29 JT61 JT66 JT71 LR03 TOW1 TOW2 VR01 VR11 WIN_21FLBBAP_BB14 WIN_21FLBBAP_BH22 WIN_21FLBBAP_CWA2 WIN_21FLBBAP_CWA4 WIN_21FLBBAP_CWA5 WIN_21FLBBAP_DM00 </code></pre>
 </div>
 </div>
 <p>SEACAR data has many more site names</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"=== IMaRS =========================="</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"=== FCRUWQD =========================="</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "=== IMaRS =========================="</code></pre>
+<pre><code>[1] "=== FCRUWQD =========================="</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">length</span>(imars_sites))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">length</span>(imars_sites))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 25</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"=== SEACAR =========================="</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"=== SEACAR =========================="</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "=== SEACAR =========================="</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">length</span>(seacar_sites))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">length</span>(seacar_sites))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 58</code></pre>
 </div>
 </div>
+<section id="alternative-site-id-vs-areaid" class="level4">
+<h4 class="anchored" data-anchor-id="alternative-site-id-vs-areaid">Alternative Site ID vs AreaID</h4>
+<p>SEACAR also has <code>AreaID</code>s, but these also do not align with Site IDs. There are only 7 <code>AreaID</code>s.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>imars_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(imars_data<span class="sc">$</span>ProgramLocationID))</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>seacar_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(seacar_data<span class="sc">$</span>AreaID))</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"=== FCRUWQD ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  imars_sites[<span class="dv">1</span><span class="sc">:</span><span class="dv">25</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"=== SEACAR ==========================</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  seacar_sites[<span class="dv">1</span><span class="sc">:</span><span class="dv">25</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== FCRUWQD ==========================
+ BB14 BH22 CWA2 CWA4 CWA5 DM08 JFK03 JT61 JT66 JT71 LR03 LR05 LR06 MRDW MRMO MRRB MRSC RB1A VR01 VR11 VS01 WQ01 WQ02 WQ04 WQ05A 
+ === SEACAR ==========================
+ 6 NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA </code></pre>
+</div>
+</div>
+</section>
 </section>
 <section id="todo-compare-specific-stations" class="level3">
 <h3 class="anchored" data-anchor-id="todo-compare-specific-stations">TODO: compare specific stations</h3>
 <p>Cannot compare within stations until station number mapping is completed (see above section about station id malignment).</p>
+</section>
+<section id="compare-distributions-of-nutrient-data" class="level2">
+<h2 class="anchored" data-anchor-id="compare-distributions-of-nutrient-data">compare distributions of nutrient data</h2>
+<section id="ammonia-distribution-across-all-sites" class="level3">
+<h3 class="anchored" data-anchor-id="ammonia-distribution-across-all-sites">Ammonia distribution across all sites</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select relevant nutrient columns from SEACAR and DEP datasets</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot distributions side by side for SEACAR and FCRUWQD</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the datasets with a new column to identify the source</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  seacar_data <span class="sc">%&gt;%</span> </span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(ParameterName, ResultValue) <span class="sc">%&gt;%</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(ParameterName <span class="sc">==</span> <span class="st">"Ammonium, Filtered (NH4)"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Source =</span> <span class="st">"SEACAR"</span>),</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  imars_data <span class="sc">%&gt;%</span> </span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(ParameterName, ResultValue) <span class="sc">%&gt;%</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(ParameterName <span class="sc">==</span> <span class="st">"Ammonium (N)"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Source =</span> <span class="st">"FCRUWQD"</span>)</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot side-by-side distributions with log-scaled x-axis</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(combined_data, <span class="fu">aes</span>(<span class="at">x =</span> ResultValue, <span class="at">fill =</span> Source)) <span class="sc">+</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ammonium Distributions: SEACAR vs FCRUWQD (Log Scale)"</span>,</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Nutrient Value (Log Scale)"</span>,</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Density"</span>,</span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Source"</span>) <span class="sc">+</span></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span>   <span class="co"># Log scale on the x-axis</span></span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="BBAP_WQ_5026_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -490,7 +615,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/USF-IMARS\.github\.io\/dep-seacar-data-compare\/");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
