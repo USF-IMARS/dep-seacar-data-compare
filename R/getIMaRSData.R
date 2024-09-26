@@ -4,7 +4,7 @@ value_map <- c(
   # ??? = 21FLWQA
   "AOML_WQ_3" = "AOML", 
   "BBAP_WQ_5026" = "BBAP", 
-  "BBWW_WQ_4057" = "BBWW",  # TODO: load new zip fild from box
+  "BBWW_WQ_4057" = "BBWW",
   # ??? = "BROWARD", 
   "DEP_ECA_WQ - 5033" = "DEP",
   # ??? = "DERM",

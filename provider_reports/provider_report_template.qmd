@@ -3,7 +3,7 @@ title: "AOML_WQ_3 Report"
 description: DEP Water Quality Data Report
 code-fold: true
 params: 
-  provider_id: AOML_WQ_3  # must be "AOML_WQ_3"
+  provider_id: BBWW_WQ_4057  # must be "AOML_WQ_3"
 ---
 
 ```{r}
