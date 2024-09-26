@@ -6,7 +6,7 @@ value_map <- c(
   "BBAP_WQ_5026" = "BBAP", 
   "BBWW_WQ_4057" = "BBWW",
   # ??? = "BROWARD", 
-  "DEP_ECA_WQ - 5033" = "DEP",
+  "DEP_ECA_WQ_5033" = "DEP",
   # ??? = "DERM",
   "MIAMI_BEACH_WQ_4058" = "Miami Beach",  # TODO: map this to merged "Miami Beach*"
   # ??? = "Miami Beach  Outfalls",
