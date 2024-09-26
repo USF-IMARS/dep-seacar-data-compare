@@ -72,7 +72,11 @@ templ <- gsub(
     "AOML_WQ_3", "{{provider_id}}", 
   readLines(REPORT_TEMPLATE))
 
+# ensure reports dir exists
 dir.create(REPORTS_DIR, showWarnings=FALSE)
+
+# ensure reports dir is empty
+file.remove(list.files(REPORTS_DIR, full.names = TRUE))
 
 # === iterate through the data structure 
 # List all the subdirectories
